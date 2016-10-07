@@ -2,13 +2,16 @@
     padding: 0px;
     margin: 0px;
 }
+
+body {
+    padding: 50px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
 .row-centered {
     text-align: center;
 }
 
-.form-group {
-    text-align: center;
-    width: 500px;
-    height: 500px;
-    border: 1px;
+a {
+    color: #00B7FF;
 }

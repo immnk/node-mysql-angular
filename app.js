@@ -2,10 +2,18 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var http = require('http');
 var mysql = require('mysql');
+var ejs = require('ejs');
+var path = require('path');
 var app = express();
+
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+// This is used to serve the static files from the app directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 var connection = mysql.createConnection({
     host: 'localhost',
@@ -24,6 +32,23 @@ app.connection.connect(function(err) {
 });
 app.connection.query('USE userdata');
 var routes = require("./routes/routes.js")(app);
+
+// app.use('/js', express.static(__dirname + '/js'));
+// app.use('/bower_components', express.static(__dirname + '/bower_components'));
+// app.use('/css', express.static(__dirname + '/css'));
+// app.use('/templates', express.static(__dirname + '/templates'));
+
+// Load the home page on /
+app.get('/', function(req, res) {
+    ejs.renderFile('./views/homepage.ejs', function(err, result) {
+        if (!err) {
+            res.end(result);
+        } else {
+            res.end("An error occurred");
+            console.log(err);
+        }
+    });
+});
 
 /**
  * Get port from environment and store in Express.

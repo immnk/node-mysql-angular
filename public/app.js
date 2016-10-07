@@ -1,35 +1,41 @@
-var app = angular.module('myLoginApp', ['ui.router']);
+var app = angular.module('eBayApp', ['ui.router']);
 
 app.config(function($stateProvider, $urlRouterProvider) {
+    console.log('in config function');
+
     $stateProvider
         .state('landing', {
             url: '/landing',
             templateUrl: 'templates/landing.html',
-            views: {
-                "register": {
-                    templateUrl: 'templates/register.html',
-                    controller: 'RegisterController'
-                },
-                "login": {
-                    templateUrl: 'templates/loginpage.html',
-                    controller: 'LoginController'
-                }
-            }
+            // abstract: true
+        })
+        .state('landing.register', {
+            url: 'register',
+            templateUrl: 'templates/register.html',
+            controller: 'RegisterController'
+
+        })
+        .state('landing.login', {
+            url: '/login',
+            templateUrl: 'templates/loginpage.html',
+            controller: 'LoginController'
         })
         .state('dashboard', {
             url: '/dashboard',
             templateUrl: 'templates/dashboard.html',
             controller: 'DashController'
-        }).state('logout', {
+        })
+        .state('logout', {
             url: '/logout',
             templateUrl: 'templates/register.html',
             controller: 'LogoutController'
-        }).state('sell', {
+        })
+        .state('sell', {
             url: '/sell',
             templateUrl: 'templates/sell.html',
             controller: 'SellController'
         })
-    $urlRouterProvider.otherwise('/landing/register');
+    $urlRouterProvider.otherwise('/landing');
 });
 app.controller("RegisterController", function($scope, $http, $state) {
     $scope.already_registered = true;
@@ -104,7 +110,12 @@ app.controller("LogoutController", function($scope, $http) {
     }).error(function(data) {
         console.log("unexpected error");
     })
+});
+
+app.controller('DashController', function($scope, $state) {
+
 })
+
 app.controller('SellController', function($scope, $http, $state) {
 
     $scope.addItemToSell = function() {

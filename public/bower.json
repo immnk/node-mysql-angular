@@ -1,0 +1,21 @@
+{
+  "name": "eBay",
+  "homepage": "https://github.com/immnk/node-mysql-angular",
+  "authors": [
+    "Mani <im.manikanta@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-ui-router": "^0.3.1",
+    "bootstrap": "^3.3.7"
+  }
+}

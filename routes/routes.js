@@ -1,8 +1,5 @@
 var appRouter = function(app) {
 
-    app.get("/", function(req, res) {
-        res.send({ 'response': 'Hello World!' });
-    });
     app.get("/checkLogin", function(req, res) {
         var username, password, json_responses;
         username = req.param("username");
@@ -25,6 +22,10 @@ var appRouter = function(app) {
                     }
                 }
             }, getUser);
+        } else {
+            console.log('empty params passed');
+            json_responses = { "statusCode": 300 };
+            res.send(json_responses);
         }
     });
 
