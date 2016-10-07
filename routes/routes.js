@@ -3,12 +3,10 @@ var appRouter = function(app) {
     app.get("/", function(req, res) {
         res.send({ 'response': 'Hello World!' });
     });
-
     app.get("/checkLogin", function(req, res) {
         var username, password, json_responses;
         username = req.param("username");
         password = req.param("password");
-
         if (username !== '' && password !== '') {
             var getUser = "select * from registered_users where email='" + username + "' and password='" + password + "'";
             console.log("Query is:" + getUser);
