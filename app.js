@@ -40,14 +40,15 @@ var routes = require("./routes/routes.js")(app);
 
 // Load the home page on /
 app.get('/', function(req, res) {
-    ejs.renderFile('./views/homepage.ejs', function(err, result) {
-        if (!err) {
-            res.end(result);
-        } else {
-            res.end("An error occurred");
-            console.log(err);
-        }
-    });
+    // ejs.renderFile('./views/homepage.ejs', function(err, result) {
+    //     if (!err) {
+    //         res.end(result);
+    //     } else {
+    //         res.end("An error occurred");
+    //         console.log(err);
+    //     }
+    // });
+    res.sendFile('./public/index.html');
 });
 
 /**
