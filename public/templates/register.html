@@ -1,0 +1,34 @@
+<form class="registerUser">
+    <fieldset>
+        <div class="form-group">
+            <div>
+                <input type="text" placeholder="FirstName" data-ng-model="firstname" class="form-control">
+            </div>
+            <br />
+            <div>
+                <input type="text" placeholder="LastName" data-ng-model="lastname" class="form-control">
+            </div>
+            <br />
+            <div>
+                <input type="email" placeholder="Email" data-ng-model="email" class="form-control">
+            </div>
+            <br />
+            <div>
+                <input type="password" placeholder="Password" data-ng-model="password" class="form-control">
+            </div>
+            <br />
+            <div>
+                <input type="submit" value="Register" data-ng-click="registerUser();" class="btn btn-primary btn-lg btn-block">
+            </div>
+        </div>
+        <div class="alert alert-danger" data-ng-hide="already_registered">
+            <strong>Username already registered, Please Login.</strong>
+        </div>
+        <div class="alert alert-danger" data-ng-hide="unexpected_error">
+            <strong>An Unexpected Error Occurred</strong>
+        </div>
+        <div class="alert alert-danger" data-ng-hide="blank_fields">
+            <strong>There are one or more blank fields. Please fill information</strong>
+        </div>
+    </fieldset>
+</form>

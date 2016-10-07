@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="angularjs/ang_login.js"></script>
+</head>
+<body>
+    <div class="container" ng-controller="SellController">
+        <div class="row">
+            <div class="col-md-12">
+                <form class="sellPage">
+                    <fieldset>
+                        <div class="form-group">
+                            <label>ITEM NAME:</label>
+                            <div><input type="text" placeholder="ItemName" data-ng-model="item_name" class="form-control"></div>
+                            <br />
+                            <label>ITEM PRICE:</label>
+                            <div><input type="double" placeholder="ItemPrice" data-ng-model="item_price" class="form-control"></div>
+                            <br />
+                            <label>ITEM DESCRIPTION:</label><br />
+                            <textarea class="form-control" rows="5" data-ng-model="item_desc"></textarea>
+                            <br />
+                            <div><input type="submit" value="Sell It!" data-ng-click="addItemToSell();" class="btn btn-primary btn-lg btn-block"></div>
+                        </div>
+                    </fieldset>
+                </form>
+
+            </div>
+        </div>
+        </div>
+</body>
+</html>

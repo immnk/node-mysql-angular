@@ -1,0 +1,14 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+.row-centered {
+    text-align: center;
+}
+
+.form-group {
+    text-align: center;
+    width: 500px;
+    height: 500px;
+    border: 1px;
+}

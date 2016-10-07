@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="Scripts/angular.min.js"></script>
+    <script src="Scripts/angular-route.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.min.js"></script>
+    <title>Electronics,Cars,Fashion,Collectibles,Coupons and More | eBay</title>
+
+    <style>
+        .form-group{
+            text-align: center;
+            width: 500px;
+            height: 500px;
+            border: 1px;
+        }
+        *
+        {
+            padding:0px;
+            margin: 0px;
+        }
+
+    </style>
+    <script src="angularjs/ang_login.js"></script>
+</head>
+<body ng-controller="DashboardController">
+<div class="container-fluid">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" ui-sref="dashboard">
+                    <img class="nav-center" alt="Brand" src="../images/ebay-logo.jpg" height="100">
+                    <!-- <span class="nav-center">Amrutha Sweets</span> -->
+                </a>
+            </div>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    <li ui-sref-active="active"><a href ui-sref="buy">Buy</a></li>
+                    <li ui-sref-active="active"><a href ui-sref="bid"><span>Bid</span></a></li>
+                    <li ui-sref-active="active"><a href ui-sref="sell"><span>Sell</span></a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li ui-sref-active="active"><a ui-sref="myebay">My ebay</a></li>
+                    <li ui-sref-active="active"><a ui-sref="cart">Cart</a></li>
+                    <li ui-sref-active="active"><a ui-sref="logout">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div>
+    <div ui-view=""> </div>
+</div>
+<!-- End of Web Content-->
+</body>
+</html>
