@@ -15,7 +15,7 @@ app.set('view engine', 'ejs');
 
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 // This is used to serve the static files from the app directory
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({

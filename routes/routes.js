@@ -30,44 +30,40 @@ var appRouter = function(app) {
 
     app.post("/registerUser", function(req, res) {
         console.log('request for registering');
+        console.log(req.body);
         var json_responses;
         /*var userpass = req.param("password");
         var hashedPass = hashPassword(userpass);
         console.log(hashedPass);*/
 
         //Check if user already register.
-        if (req.param("email")!== '' && req.param("password") !== '' && req.param("firstname") !== '' && req.param("lastname")!== ''){
-            var checkUser = "SELECT * FROM registered_users where email='" + req.param("email") + "'";
-            fetchData(function (err, result) {
+        if (req.body.email && req.body.password && req.body.firstname && req.body.lastname) {
+            var checkUser = "SELECT * FROM registered_users where email='" + req.body.email + "'";
+            fetchData(function(err, result) {
                 if (err) {
                     throw err;
-                }
-                else {
+                } else {
                     console.log(result);
                     if (result.length > 0) {
                         console.log("User already registered!");
-                        json_responses = {statusCode: 401};
+                        json_responses = { statusCode: 401 };
                         res.send(json_responses);
-                    }
-                    else {
+                    } else {
                         //Insert new user info into table.
-
                         console.log("Registering user into db");
-                        var regUser = "INSERT INTO registered_users(firstname,lastname,email,password) VALUES('" + req.param("firstname") + "','" + req.param("lastname") + "','" + req.param("email") + "','" + req.param("password") + "')";
-                        fetchData(function (err, result) {
+                        var regUser = "INSERT INTO registered_users(firstname,lastname,email,password) VALUES('" + req.body.firstname + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "')";
+                        fetchData(function(err, result) {
                             if (err) {
                                 throw err;
-                            }
-                            else {
+                            } else {
                                 console.log(result);
                                 if (result.affectedRows == 1) {
                                     console.log('Registration Successful');
-                                    json_responses = {"statusCode": 200};
+                                    json_responses = { "statusCode": 200 };
                                     res.send(json_responses);
-                                }
-                                else {
+                                } else {
                                     console.log('Unsuccessful Registration');
-                                    json_responses = {"statusCode": 402};
+                                    json_responses = { "statusCode": 402 };
                                     res.send(json_responses);
                                 }
                             }
@@ -75,19 +71,23 @@ var appRouter = function(app) {
                     }
                 }
             }, checkUser);
+        } else {
+            console.log('Insufficient body params');
+            json_responses = {
+                "statusCode": 400
+            }
+            res.send(json_responses);
         }
     });
 
-    app.post('/logout',function(req,res){
-       var json_responses;
-        if(req.session.username)
-        {
+    app.post('/logout', function(req, res) {
+        var json_responses;
+        if (req.session.username) {
             req.session.destroy();
             console.log("Session Destroyed");
-            json_responses = {"statusCode":200};
-        }
-        else{
-            json_responses = {"statusCode":401};
+            json_responses = { "statusCode": 200 };
+        } else {
+            json_responses = { "statusCode": 401 };
         }
         res.send(json_responses);
     });

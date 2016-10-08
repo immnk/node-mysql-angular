@@ -11,6 +11,7 @@ app.controller("RegisterController", function($scope, $http, $state) {
         $http({
             method: "POST",
             url: '/registerUser',
+            // headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             data: {
                 "firstname": $scope.firstname,
                 "lastname": $scope.lastname,
