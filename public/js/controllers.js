@@ -20,7 +20,7 @@ app.controller("RegisterController", function($scope, $http, $state) {
         }).success(function(data){
             if(data.statusCode == 200)
             {
-                $state.transitionTo('dashboard.sell');
+                $state.go('dashboard.sell');
             }
             else if(data.statusCode == 401)
             {
@@ -54,7 +54,7 @@ app.controller("LoginController", function($scope, $http, $state) {
                 $scope.invalid_login = false;
                 $scope.unexpected_error = true;
             } else {
-                $state.go('dashboard');
+                $state.go('dashboard.sell');
             }
         }).error(function(data) {
             $scope.invalid_login = true;

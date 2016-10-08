@@ -34,7 +34,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         })
         .state('dashboard.sell', {
             url: '/sell',
-            templateUrl: 'templates/sell.html',
+            templateUrl: 'templates/landing.html',
             controller: 'SellController'
         })
     $urlRouterProvider.otherwise('/landing/register');

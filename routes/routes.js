@@ -1,6 +1,5 @@
 var appRouter = function(app) {
-
-    app.get("/checkLogin", function(req, res) {
+    app.post("/checkLogin", function(req, res) {
         var username, password, json_responses;
         username = req.param("username");
         password = req.param("password");
@@ -12,7 +11,7 @@ var appRouter = function(app) {
                     throw err;
                 } else {
                     if (result.length > 0) {
-                        // req.session.username = username;
+                        req.session.username = username;
                         console.log("Session initialized");
                         json_responses = { "statusCode": 200 };
                         res.send(json_responses);
@@ -29,52 +28,71 @@ var appRouter = function(app) {
         }
     });
 
-    app.post("/registerUser", function(req, res, next) {
+    app.post("/registerUser", function(req, res) {
         console.log('request for registering');
         var json_responses;
+        /*var userpass = req.param("password");
+        var hashedPass = hashPassword(userpass);
+        console.log(hashedPass);*/
 
         //Check if user already register.
-        var checkUser = "SELECT * FROM registered_users where email='" + req.param("email") + "'";
-        fetchData(function (err, result) {
-            if (err) {
-                throw err;
-            }
-            else {
-                console.log(result);
-                if (result.length > 0) {
-                    console.log("User already registered!");
-                    json_responses = {statusCode: 401};
-                    res.send(json_responses);
+        if (req.param("email")!== '' && req.param("password") !== '' && req.param("firstname") !== '' && req.param("lastname")!== ''){
+            var checkUser = "SELECT * FROM registered_users where email='" + req.param("email") + "'";
+            fetchData(function (err, result) {
+                if (err) {
+                    throw err;
                 }
                 else {
-                    //Insert new user info into table.
+                    console.log(result);
+                    if (result.length > 0) {
+                        console.log("User already registered!");
+                        json_responses = {statusCode: 401};
+                        res.send(json_responses);
+                    }
+                    else {
+                        //Insert new user info into table.
 
-                    console.log("Registering user into db");
-                    var regUser = "INSERT INTO registered_users(firstname,lastname,email,password) VALUES('" + req.param("firstname") + "','" + req.param("lastname") + "','" + req.param("email") + "','" + req.param("password") + "')";
-                    fetchData(function (err, result) {
-                        if (err) {
-                            throw err;
-                        }
-                        else {
-                            console.log(result);
-                            if (result.affectedRows == 1) {
-                                console.log('Registration Successful');
-                                json_responses = {"statusCode": 200};
-                                res.send(json_responses);
+                        console.log("Registering user into db");
+                        var regUser = "INSERT INTO registered_users(firstname,lastname,email,password) VALUES('" + req.param("firstname") + "','" + req.param("lastname") + "','" + req.param("email") + "','" + req.param("password") + "')";
+                        fetchData(function (err, result) {
+                            if (err) {
+                                throw err;
                             }
                             else {
-                                console.log('Unsuccessful Registration');
-                                json_responses = {"statusCode": 402};
-                                res.send(json_responses);
+                                console.log(result);
+                                if (result.affectedRows == 1) {
+                                    console.log('Registration Successful');
+                                    json_responses = {"statusCode": 200};
+                                    res.send(json_responses);
+                                }
+                                else {
+                                    console.log('Unsuccessful Registration');
+                                    json_responses = {"statusCode": 402};
+                                    res.send(json_responses);
+                                }
                             }
-                        }
-                    }, regUser);
+                        }, regUser);
+                    }
                 }
-            }
-        }, checkUser);
+            }, checkUser);
+        }
     });
 
-        function fetchData(callback, sqlQuery) {
+    app.post('/logout',function(req,res){
+       var json_responses;
+        if(req.session.username)
+        {
+            req.session.destroy();
+            console.log("Session Destroyed");
+            json_responses = {"statusCode":200};
+        }
+        else{
+            json_responses = {"statusCode":401};
+        }
+        res.send(json_responses);
+    });
+
+    function fetchData(callback, sqlQuery) {
         console.log("\nSql Query" + sqlQuery);
 
         app.connection.query(sqlQuery, function(err, rows, fields) {
@@ -86,6 +104,27 @@ var appRouter = function(app) {
             }
         });
     }
+    /*function hashPassword(userPassword){
+        bcrypt.genSalt(11,function (err,salt) {
+            if(err)
+            {
+                return console.log(err);
+            }
+            else {
+                bcrypt.hash(userPassword,salt,function (err,hashedPassword) {
+                    if(err)
+                    {
+                        return console.log(err);
+                    }
+                    else{
+                        console.log(hashedPassword);
+                    }
+                })
+            }
+        })
+    }*/
 }
+
+
 
 module.exports = appRouter;

@@ -4,6 +4,8 @@ var http = require('http');
 var mysql = require('mysql');
 var ejs = require('ejs');
 var path = require('path');
+//var bcrypt = require('bcrypt');
+var session = require('client-sessions');
 var app = express();
 
 // view engine setup
@@ -16,7 +18,12 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // This is used to serve the static files from the app directory
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(session({
+    cookieName: 'session',
+    secret: 'mySecretKey',
+    duration: 30*60*1000,
+    active: 5*60*1000,
+}))
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
