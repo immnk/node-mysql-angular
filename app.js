@@ -10,6 +10,8 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // This is used to serve the static files from the app directory
@@ -17,8 +19,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var connection = mysql.createConnection({
     host: 'localhost',
-    user: 'mani',
-    password: 'password',
+    user: 'root',
+    password: 'root',
     database: 'userdata',
     multipleStatements: true
 });

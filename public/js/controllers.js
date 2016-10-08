@@ -7,7 +7,6 @@ app.controller("LandingController", function($scope) {
 app.controller("RegisterController", function($scope, $http, $state) {
     $scope.already_registered = true;
     $scope.unexpected_error = true;
-    $scope.blank_fields = true;
     $scope.registerUser = function() {
         $http({
             method: "POST",
@@ -18,23 +17,21 @@ app.controller("RegisterController", function($scope, $http, $state) {
                 "email": $scope.email,
                 "password": $scope.password
             }
-        }).success(function(data) {
-            if (data.statusCode == 401) {
+        }).success(function(data){
+            if(data.statusCode == 200)
+            {
+                $state.transitionTo('dashboard.sell');
+            }
+            else if(data.statusCode == 401)
+            {
                 $scope.already_registered = false;
                 $scope.unexpected_error = true;
-                $scope.blank_fields = true;
-            } else if (data.statusCode == 402) {
-                $scope.unexpected_error = false;
-                $scope.already_registered = true;
-                $scope.blank_fields = true;
-            } else if (data.statusCode == 403) {
-                $scope.already_registered = true;
-                $scope.unexpected_error = true;
-                $scope.blank_fields = false;
-            } else {
-                $state.go('dashboard');
             }
-
+            else
+            {
+                $scope.already_registered = true;
+                $scope.unexpected_error = false;
+            }
         }).error(function(data) {
 
         });

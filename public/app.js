@@ -23,15 +23,16 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         })
         .state('dashboard', {
             url: '/dashboard',
+            abstract:true,
             templateUrl: 'templates/dashboard.html',
             controller: 'DashController'
         })
-        .state('logout', {
+        .state('dashboard.logout', {
             url: '/logout',
             templateUrl: 'templates/register.html',
             controller: 'LogoutController'
         })
-        .state('sell', {
+        .state('dashboard.sell', {
             url: '/sell',
             templateUrl: 'templates/sell.html',
             controller: 'SellController'
