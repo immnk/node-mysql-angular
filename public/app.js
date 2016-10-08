@@ -27,9 +27,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
             templateUrl: 'templates/dashboard.html',
             controller: 'DashController'
         })
-        .state('dashboard.logout', {
-            url: '/logout',
-            templateUrl: 'templates/landing.html',
+       .state('dashboard.logout', {
             controller: 'LogoutController'
         })
         .state('dashboard.sell', {

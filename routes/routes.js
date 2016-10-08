@@ -82,9 +82,12 @@ var appRouter = function(app) {
 
     app.post('/logout', function(req, res) {
         var json_responses;
+        console.log("before if");
         if (req.session.username) {
+            console.log("inside if")
             req.session.destroy();
             console.log("Session Destroyed");
+           // res.redirect('/');
             json_responses = { "statusCode": 200 };
         } else {
             json_responses = { "statusCode": 401 };

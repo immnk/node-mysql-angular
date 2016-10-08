@@ -23,7 +23,8 @@ app.use(session({
     secret: 'mySecretKey',
     duration: 30*60*1000,
     active: 5*60*1000,
-}))
+}));
+
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',

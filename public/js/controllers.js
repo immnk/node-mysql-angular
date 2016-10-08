@@ -65,14 +65,19 @@ app.controller("LoginController", function($scope, $http, $state) {
 });
 
 app.controller("LogoutController", function($scope, $http) {
+    console.log("inside LogoutController");
     $http({
         method: "POST",
         url: "/logout"
     }).success(function(data) {
-        if (data.statusCode == 200)
-            $state.go('logout');
-        else
+        if (data.statusCode == 200){
+            console.log("its a 200");
+            window.location.assign("/");
+        }
+            //$state.go('logout');
+        else {
             console.log("its a 401");
+        }
     }).error(function(data) {
         console.log("unexpected error");
     })
