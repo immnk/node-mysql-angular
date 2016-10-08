@@ -29,12 +29,12 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         })
         .state('dashboard.logout', {
             url: '/logout',
-            templateUrl: 'templates/register.html',
+            templateUrl: 'templates/landing.html',
             controller: 'LogoutController'
         })
         .state('dashboard.sell', {
             url: '/sell',
-            templateUrl: 'templates/landing.html',
+            templateUrl: 'templates/sell.html',
             controller: 'SellController'
         })
     $urlRouterProvider.otherwise('/landing/register');
