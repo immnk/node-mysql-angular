@@ -4,7 +4,6 @@ var http = require('http');
 var mysql = require('mysql');
 var ejs = require('ejs');
 var path = require('path');
-//var bcrypt = require('bcrypt');
 var session = require('client-sessions');
 var app = express();
 
