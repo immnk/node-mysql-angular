@@ -74,7 +74,6 @@ app.controller("LogoutController", function($scope, $http) {
             console.log("its a 200");
             window.location.assign("/");
         }
-            //$state.go('logout');
         else {
             console.log("its a 401");
         }
@@ -92,17 +91,39 @@ app.controller('SellController', function($scope, $http, $state) {
     $scope.addItemToSell = function() {
         $http({
             method: "POST",
-            url: '/addItemToSell',
+            url: '/addItemToDB',
             data: {
-                "posting_user": $scope.username,
-                "item_name": $scope.item_name,
-                "item_price": $scope.item_price,
-                "item_description": $scope.item_description
+                "itemName": $scope.itemName,
+                "itemPrice": $scope.itemPrice,
+                "itemDesc": $scope.itemDesc
             }
         }).success(function(data) {
-
+            if(data.statusCode == 200)
+            {
+                console.log('successfully saved ad');
+            }
+            else
+            {
+                console.log('unsuccessful save');
+            }
         }).error(function(data) {
+            console.log('unexpected error while saving ad');
 
         })
     }
+})
+
+app.controller('BuyController',function($scope,$http){
+
+    $http({
+        method: 'GET',
+        url: '/getItemsForSale'
+    }).success(function (data) {
+        $scope.buyItems = data;
+        console.log(data.posted_by);
+    }).error(function(data){
+        if(data.statusCode == 401){
+            console.log('error in getting buyItems');
+        }
+    })
 })

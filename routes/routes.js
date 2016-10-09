@@ -58,6 +58,9 @@ var appRouter = function(app) {
                             } else {
                                 console.log(result);
                                 if (result.affectedRows == 1) {
+                                    req.session.username = req.body.email;
+                                    console.log(req.session.username);
+                                    console.log('session initialized inside of register');
                                     console.log('Registration Successful');
                                     json_responses = { "statusCode": 200 };
                                     res.send(json_responses);
@@ -95,6 +98,54 @@ var appRouter = function(app) {
         res.send(json_responses);
     });
 
+    app.post("/addItemToDB",function(req,res){
+        var json_responses;
+        if(req.session.username){
+            var pushAd = "INSERT INTO ads(itemName,itemPrice,itemDesc,posted_by) VALUES('"+ req.body.itemName +"','"+ req.body.itemPrice +"','"+ req.body.itemDesc +"','"+ req.session.username +"')";
+            console.log("Query is:"+ pushAd);
+            fetchData(function(err,result){
+                if(err){
+                    throw err;
+                }
+                else{
+                    console.log(result);
+                    if(result.affectedRows == 1){
+                        console.log('Added Ad');
+                        json_responses = {"statusCode":200};
+                        res.send(json_responses);
+                    }
+                    else{
+                        json_responses = {"statusCode":401};
+                        res.send(json_responses);
+                    }
+                }
+            },pushAd);
+        }
+    });
+
+    app.get('/getItemsForSale',function (req,res) {
+        var json_responses;
+        var getItemsForSale = "SELECT * from ads where posted_by != '"+req.session.username+"'";
+        console.log(getItemsForSale);
+
+        fetchData(function(err,result){
+            if(err){
+                throw err
+            }
+            else{
+                if(result.length > 0)
+                {
+                    res.send(result);
+                }
+                else{
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getItemsForSale)
+    })
+
+
     function fetchData(callback, sqlQuery) {
         console.log("\nSql Query" + sqlQuery);
 
@@ -127,7 +178,6 @@ var appRouter = function(app) {
         })
     }*/
 }
-
 
 
 module.exports = appRouter;

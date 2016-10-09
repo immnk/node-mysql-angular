@@ -1,0 +1,21 @@
+<div class="container-fluid" class="well">
+    <h3>Items on sale:</h3>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row well" data-ng-repeat="item in buyItems">
+                <div class="col-md-6">
+                    <div>
+                        <div>{{item.itemName}}</div>
+                        <div>{{item.itemPrice}}</div>
+                        <div>{{item.itemDesc}}</div>
+                        <div>{{item.posted_by}}</div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <input type="button" value="Select Item" data-ng-click="addToCart(item.itemName,item.itemPrice);" class="btn btn-primary">
+                </div>
+            </div>
+        </div>
+        </div>
+</div>
+
