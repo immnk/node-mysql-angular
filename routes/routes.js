@@ -190,7 +190,7 @@ var appRouter = function(app) {
     });
 
     app.get("/displayItemsFromCart",function (req,res) {
-        
+
     });
 
 
