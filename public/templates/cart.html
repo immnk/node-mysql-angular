@@ -1,8 +1,8 @@
-<div class="container-fluid" class="well">
-    <h3>Items on sale:</h3>
+<div class="container-fluid">
+    <h1>Your eBay Shopping Cart</h1>
     <div class="row">
         <div class="col-md-6">
-            <div class="row well" data-ng-repeat="item in buyItems">
+            <div class="row well" data-ng-repeat="item in cartedItems">
                 <div class="col-md-6">
                     <div>
                         <div>{{item.itemName}}</div>
@@ -13,11 +13,10 @@
                 </div>
                 <div class="col-md-6">
                     <button class="btn btn-success" type="button" ng-click="addItemToCart(item.itemName,item.posted_by)" tabindex="3">
-                        <span class="glyphicon glyphicon-plus"></span>&nbsp;Add To Cart
+                        <span class="glyphicon glyphicon-plus"></span>&nbsp;Proceed to Checkout
                     </button>
                 </div>
             </div>
         </div>
-        </div>
+    </div>
 </div>
-

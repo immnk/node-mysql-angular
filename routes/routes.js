@@ -14,11 +14,10 @@ var appRouter = function(app) {
                 } else {
                     console.log(result);
                     bcrypt.compare(pass,result.toString(),function(err){
-                        console.log(err);
                         if (!err) {
                             req.session.username = username;
                             console.log("Session initialized");
-                            json_responses = { "statusCode": 200 };
+                            json_responses = { "statusCode": 200};
                             res.send(json_responses);
                         } else {
                             json_responses = { "statusCode": 401 };
@@ -156,6 +155,43 @@ var appRouter = function(app) {
             }
         },getItemsForSale)
     })
+
+    app.post("/addItemToCartDB",function(req,res){
+        var json_responses;
+        var itemName = req.body.itemName;
+        var itemPostedBy = req.body.itemPostedBy;
+        var getItemDetails = "SELECT * FROM ads where itemName = '"+itemName+"' && posted_by='"+itemPostedBy+"'";
+        fetchData(function (err,result) {
+            if(err){
+                throw err;
+            }
+            else{
+                if(result.length > 0)
+                {
+                    console.log('inside cartIt');
+                    if(req.session.username){
+                        console.log('inside session check');
+                        if(!req.session.cart){
+                            req.session.cart = [];
+                        }
+                            req.session.cart.push({
+                                itemName: result[0].itemName,
+                                itemPrice: result[0].itemPrice,
+                                itemDesc: result[0].itemDesc,
+                                itemPostedBy : result[0].posted_by
+                            });
+                            json_responses = {"statusCode":200};
+                        }
+                    console.log("User Cart:",req.session.cart);
+                    res.send(json_responses);
+                    }
+                }
+        },getItemDetails)
+    });
+
+    app.get("/displayItemsFromCart",function (req,res) {
+        
+    });
 
 
     function fetchData(callback, sqlQuery) {

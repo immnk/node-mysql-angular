@@ -55,7 +55,7 @@ app.controller("LoginController", function($scope, $http, $state) {
                 $scope.invalid_login = false;
                 $scope.unexpected_error = true;
             } else {
-                $state.go('dashboard.sell');
+                    $state.go('dashboard.sell');
             }
         }).error(function(data) {
             $scope.invalid_login = true;
@@ -84,7 +84,7 @@ app.controller("LogoutController", function($scope, $http) {
 
 app.controller('DashController', function($scope, $state) {
 
-})
+});
 
 app.controller('SellController', function($scope, $http, $state) {
 
@@ -111,19 +111,47 @@ app.controller('SellController', function($scope, $http, $state) {
 
         })
     }
-})
+});
 
-app.controller('BuyController',function($scope,$http){
+app.controller('BuyController',function($scope,$http) {
 
     $http({
         method: 'GET',
         url: '/getItemsForSale'
     }).success(function (data) {
         $scope.buyItems = data;
-        console.log(data.posted_by);
-    }).error(function(data){
-        if(data.statusCode == 401){
+    }).error(function (data) {
+        if (data.statusCode == 401) {
             console.log('error in getting buyItems');
         }
     })
-})
+
+    $scope.addItemToCart = function(name,seller){
+        $http({
+            method: "POST",
+            url: "/addItemToCartDB",
+            data:{
+                "itemName": name,
+                "itemPostedBy":seller
+            }
+        }).success(function (data) {
+            if(data.statusCode == 200)
+            console.log("data posted");
+        }).error(function (data) {
+            console.log("Error while retrieving cart info");
+        })
+    }
+});
+
+app.controller('CartController',function($scope,$http){
+    $http({
+        method: 'GET',
+        url: '/displayItemsFromCart'
+    }).success(function (data) {
+        $scope.cartedItems = data;
+    }).error(function (data) {
+        if (data.statusCode == 401) {
+            console.log('error in getting buyItems');
+        }
+    })
+});

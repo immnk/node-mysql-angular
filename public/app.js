@@ -33,11 +33,15 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         .state('dashboard.sell', {
             url: '/sell',
             templateUrl: 'templates/sell.html',
-            controller: 'SellController'
+            controller: 'SellController',
         }).state('dashboard.buy',{
             url:'/buy',
             templateUrl: 'templates/buy.html',
             controller: 'BuyController'
+        }).state('dashboard.cart',{
+            url: '/cart',
+            templateUrl: 'templates/cart.html',
+            controller: 'CartController'
         })
     $urlRouterProvider.otherwise('/landing/register');
 });
