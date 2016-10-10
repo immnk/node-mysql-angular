@@ -114,7 +114,6 @@ app.controller('SellController', function($scope, $http, $state) {
 });
 
 app.controller('BuyController',function($scope,$http) {
-
     $http({
         method: 'GET',
         url: '/getItemsForSale'
@@ -126,19 +125,24 @@ app.controller('BuyController',function($scope,$http) {
         }
     })
 
-    $scope.addItemToCart = function(name,seller){
+    $scope.addItemToCart = function(name,seller,qty){
         $http({
             method: "POST",
             url: "/addItemToCartDB",
             data:{
                 "itemName": name,
-                "itemPostedBy":seller
+                "itemPostedBy":seller,
+                "itemQuantity": qty
             }
         }).success(function (data) {
             if(data.statusCode == 200)
-            console.log("data posted");
+            {
+                console.log("data posted");
+            }
         }).error(function (data) {
-            console.log("Error while retrieving cart info");
+            if(data.statusCode==401){
+                console.log("Error while retrieving cart info");
+            }
         })
     }
 });

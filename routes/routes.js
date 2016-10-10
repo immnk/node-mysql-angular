@@ -158,6 +158,7 @@ var appRouter = function(app) {
 
     app.post("/addItemToCartDB",function(req,res){
         var json_responses;
+        var itemQuantity = req.body.itemQuantity;
         var itemName = req.body.itemName;
         var itemPostedBy = req.body.itemPostedBy;
         var getItemDetails = "SELECT * FROM ads where itemName = '"+itemName+"' && posted_by='"+itemPostedBy+"'";
@@ -178,19 +179,48 @@ var appRouter = function(app) {
                                 itemName: result[0].itemName,
                                 itemPrice: result[0].itemPrice,
                                 itemDesc: result[0].itemDesc,
-                                itemPostedBy : result[0].posted_by
+                                itemPostedBy : result[0].posted_by,
+                                itemQuantity : itemQuantity
                             });
-                            json_responses = {"statusCode":200};
                         }
+
                     console.log("User Cart:",req.session.cart);
                     res.send(json_responses);
                     }
+                    var ItemsToBeCarted = "INSERT INTO cart(username,usercart) values('"+req.session.username+"','"+req.session.cart+"')";
+                 fetchData(function (err,result) {
+                     if(err){
+                         throw err;
+                     }
+                     else{
+                         if(result.affectedRows > 0)
+                         {
+                             console.log("cart database successfully updated");
+                             json_responses = {"statusCode":200}
+                         }
+                         else
+                         {
+                             console.log("problem while inserting cart data");
+                             json_responses={"statusCode":401};
+                         }
+                     }
+                 },ItemsToBeCarted)
                 }
         },getItemDetails)
     });
 
     app.get("/displayItemsFromCart",function (req,res) {
+        var json_responses;
+        if(req.session.cart)
+        {
+            json_responses = req.session.cart;
+            res.send(json_responses);
 
+        }
+        else{
+            json_responses = {"statusCode":401};
+            res.send(json_responses);
+        }
     });
 
 
