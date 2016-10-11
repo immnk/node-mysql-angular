@@ -175,6 +175,7 @@ var appRouter = function(app) {
                         if(!req.session.cart){
                             req.session.cart = [];
                         }
+
                             req.session.cart.push({
                                 itemName: result[0].itemName,
                                 itemPrice: result[0].itemPrice,
@@ -183,39 +184,52 @@ var appRouter = function(app) {
                                 itemQuantity : itemQuantity
                             });
                         }
-
                     console.log("User Cart:",req.session.cart);
-                    res.send(json_responses);
+                    var ItemsToBeCarted = "INSERT INTO cart(username,itemName,itemPrice,itemDesc,itemPostedBy,itemQuantity) values('"+req.session.username+"','"+itemName+"','"+result[0].itemPrice+"','"+result[0].itemDesc+"','"+result[0].posted_by+"','"+itemQuantity+"')";
+                    console.log("items to be carted"+ItemsToBeCarted);
+                    fetchData(function (err,result) {
+                        if(err){
+                            throw err;
+                        }
+                        else{
+                            if(result.affectedRows > 0)
+                            {
+                                console.log("cart database successfully updated");
+                                json_responses = {"statusCode":200}
+                            }
+                            else
+                            {
+                                console.log("problem while inserting cart data");
+                                json_responses={"statusCode":401};
+                            }
+                        }
+                    },ItemsToBeCarted);
                     }
-                    var ItemsToBeCarted = "INSERT INTO cart(username,usercart) values('"+req.session.username+"','"+req.session.cart+"')";
-                 fetchData(function (err,result) {
-                     if(err){
-                         throw err;
-                     }
-                     else{
-                         if(result.affectedRows > 0)
-                         {
-                             console.log("cart database successfully updated");
-                             json_responses = {"statusCode":200}
-                         }
-                         else
-                         {
-                             console.log("problem while inserting cart data");
-                             json_responses={"statusCode":401};
-                         }
-                     }
-                 },ItemsToBeCarted)
                 }
         },getItemDetails)
     });
 
     app.get("/displayItemsFromCart",function (req,res) {
         var json_responses;
-        if(req.session.cart)
+        if(req.session.username)
         {
-            json_responses = req.session.cart;
-            res.send(json_responses);
+            var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"'";
+            fetchData(function(err,result){
+                if(err){
+                    throw err;
+                }
+                else{
+                    if(result.length > 0){
+                        json_responses = result;
+                        res.send(json_responses);
+                    }
+                    else{
+                        json_responses = {"statusCode":401};
+                        res.send(json_responses);
+                    }
+                }
 
+            },GetUserCartItems)
         }
         else{
             json_responses = {"statusCode":401};
