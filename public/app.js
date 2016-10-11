@@ -38,10 +38,19 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
             url:'/buy',
             templateUrl: 'templates/buy.html',
             controller: 'BuyController'
-        }).state('dashboard.cart',{
-            url: '/cart',
+        }).state('dashboard.cartLanding',{
+            url:'/cartLanding',
+            templateUrl:'templates/cartLanding.html',
+            controller: 'cartLandingController'
+        }).state('dashboard.cartLanding.viewcart',{
+            url: '/viewcart',
             templateUrl: 'templates/cart.html',
             controller: 'CartController'
+        })
+        .state('dashboard.cartLanding.checkout', {
+            url: '/checkout',
+            templateUrl: 'templates/successfulSell.html',
+            controller: 'checkoutController'
         })
     $urlRouterProvider.otherwise('/landing/register');
 });

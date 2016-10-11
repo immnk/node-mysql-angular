@@ -156,7 +156,7 @@ app.controller('BuyController',function($scope,$http) {
     }
 });
 
-app.controller('CartController',function($scope,$http,$state){
+app.controller('CartController',function($scope,$state,$http){
     $http({
         method: 'GET',
         url: '/displayItemsFromCart'
@@ -183,4 +183,19 @@ app.controller('CartController',function($scope,$http,$state){
             console.log("error while deleting item from cart");
         })
     }
+
+    $scope.continueShopping= function () {
+        $state.go('dashboard.buy');
+    }
+    $scope.proceedToCheckout = function(){
+        $state.go('^.checkout');
+    }
+});
+
+app.controller("checkoutController",function ($scope,$http) {
+
+});
+
+app.controller("cartLandingController", function($scope) {
+
 });
