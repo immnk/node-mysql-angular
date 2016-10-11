@@ -235,6 +235,7 @@ var appRouter = function(app) {
                 }
                 else{
                     if(result.length > 0){
+                        console.log(result);
                         json_responses = result;
                         res.send(json_responses);
                     }
@@ -275,6 +276,34 @@ var appRouter = function(app) {
                 }
             },getTime);
         }
+    })
+    
+    app.post('/removeItemFromCartDB',function (req,res) {
+        var json_responses;
+        var itemName = req.body.itemName;
+        //var itemPostedBy = req.body.item_posted;
+
+        var deleteItemDetails = "DELETE from cart where itemName='"+itemName+"' ";
+        fetchData(function (err,result) {
+            if(err)
+            {
+                throw err;
+            }
+            else{
+                console.log(result);
+                if(result.affectedRows > 0)
+                {
+                    console.log("deleted item from cart");
+                    json_responses = {"statusCode":200};
+                    res.send(json_responses)
+                }
+                else{
+                    console.log("error while deleting item from cart");
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },deleteItemDetails)
     })
 
     function fetchData(callback, sqlQuery) {

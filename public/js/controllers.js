@@ -156,7 +156,7 @@ app.controller('BuyController',function($scope,$http) {
     }
 });
 
-app.controller('CartController',function($scope,$http){
+app.controller('CartController',function($scope,$http,$state){
     $http({
         method: 'GET',
         url: '/displayItemsFromCart'
@@ -167,4 +167,20 @@ app.controller('CartController',function($scope,$http){
             console.log('error in getting buyItems');
         }
     })
+
+    $scope.removeItemFromCart = function (name) {
+        $http({
+            method: "POST",
+            url: "/removeItemFromCartDB",
+            data:{
+                "itemName": name
+            }
+        }).success(function (data) {
+            if(data.statusCode == 200){
+                $state.reload('dashboard.cart');
+            }
+        }).error(function (data) {
+            console.log("error while deleting item from cart");
+        })
+    }
 });
