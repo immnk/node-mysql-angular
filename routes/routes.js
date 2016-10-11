@@ -5,6 +5,8 @@ var appRouter = function(app) {
         var username, password, json_responses;
         username = req.body.username;
         pass = req.body.password;
+        var time = Date();
+        console.log(time);
         if (username !== '' && pass !== '') {
             var getUser = "select password from registered_users where email='" + username + "'";
             console.log("Query is:" + getUser);
@@ -15,6 +17,18 @@ var appRouter = function(app) {
                     console.log(result);
                     bcrypt.compare(pass,result.toString(),function(err){
                         if (!err) {
+                            var updateTime = "UPDATE registered_users SET last_login='"+time+"' where email='"+username+"'";
+                            fetchData(function (err,result) {
+                                if(err){
+                                    throw err;
+                                }
+                                else{
+                                    if(result.affectedRows > 0)
+                                    {
+                                        console.log("time updated");
+                                    }
+                                }
+                            },updateTime);
                             req.session.username = username;
                             console.log("Session initialized");
                             json_responses = { "statusCode": 200};
@@ -38,6 +52,7 @@ var appRouter = function(app) {
         console.log(req.body);
         var json_responses;
         var userpass = req.body.password;
+
 
         //Check if user already register.
         if (req.body.email && req.body.password && req.body.firstname && req.body.lastname) {
@@ -76,7 +91,7 @@ var appRouter = function(app) {
                                                     console.log(req.session.username);
                                                     console.log('session initialized inside of register');
                                                     console.log('Registration Successful');
-                                                    json_responses = {"statusCode": 200};
+                                                    json_responses = {"statusCode": 200,"last_login":time};
                                                     res.send(json_responses);
                                                 } else {
                                                     console.log('Unsuccessful Registration');
@@ -237,6 +252,30 @@ var appRouter = function(app) {
         }
     });
 
+    app.get('/getLastLoggedInTime',function (req,res) {
+       var json_responses;
+        if(req.session.username){
+            var getTime = "SELECT last_login from registered_users where email = '"+req.session.username+"'";
+            fetchData(function (err,result) {
+                if(err)
+                {
+                    throw err;
+                }
+                else{
+                    if(result.length > 0)
+                    {
+                        console.log("time"+result);
+                        json_responses = result[0].last_login;
+                        res.send(json_responses);
+                    }
+                    else {
+                        json_responses = {"statusCode":401};
+                        res.send(json_responses);
+                    }
+                }
+            },getTime);
+        }
+    })
 
     function fetchData(callback, sqlQuery) {
         console.log("\nSql Query" + sqlQuery);

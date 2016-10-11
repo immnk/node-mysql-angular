@@ -82,8 +82,17 @@ app.controller("LogoutController", function($scope, $http) {
     })
 });
 
-app.controller('DashController', function($scope, $state) {
-
+app.controller('DashController', function($scope, $state,$http) {
+    $scope.displayTime = true;
+    $http({
+        method: "GET",
+        url: '/getLastLoggedInTime'
+    }).success(function (data) {
+        $scope.displayTime = false;
+        $scope.last_time = data;
+    }).error(function (data) {
+        $scope.displayTime = true;
+    })
 });
 
 app.controller('SellController', function($scope, $http, $state) {
