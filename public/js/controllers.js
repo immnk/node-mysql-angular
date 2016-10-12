@@ -163,7 +163,10 @@ app.controller('CartController',function($scope,$state,$http){
         url: '/displayItemsFromCart'
     }).success(function (data) {
         $scope.cartedItems = data;
-        $scope.total = $scope.total + data.itemQuantity*data.itemPrice;
+        for(var i=0;i<data.length;i++)
+        {
+            $scope.total = $scope.total + data[i].itemPrice*data[i].itemQuantity;
+        }
         $scope.qty = data.length;
     }).error(function (data) {
         if (data.statusCode == 401) {
@@ -191,10 +194,19 @@ app.controller('CartController',function($scope,$state,$http){
         $state.go('dashboard.buy');
     }
     $scope.proceedToCheckout = function(){
-        $state.go('^.checkout');
         $http({
             method:'GET',
-            url:'/getCheckoutInfo'
+            url:'/updateCheckoutInfo'
+        }).success(function (data) {
+            if(data.statusCode == 200)
+            {
+                $state.go('^.checkout');
+            }
+        }).error(function (data) {
+            if(data.statusCode == 401)
+            {
+                console.log('error while updating checkout info');
+            }
         })
     }
 });
@@ -206,3 +218,18 @@ app.controller("checkoutController",function ($scope,$http) {
 app.controller("cartLandingController", function($scope) {
 
 });
+
+app.controller('myebayController',function ($scope,$http) {
+
+    $http({
+        method: "GET",
+        url: "/getCheckoutInfo"
+    }).success(function (data) {
+        $scope.orderHist = data;
+    }).error(function(data){
+        if(data.statusCode==401){
+            console.log("error while getting order history");
+        }
+    })
+
+})

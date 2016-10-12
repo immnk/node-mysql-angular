@@ -229,6 +229,7 @@ var appRouter = function(app) {
         if(req.session.username)
         {
             var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"'";
+            //var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"' AND isCheckedOut!='"+1+"'";
             fetchData(function(err,result){
                 if(err){
                     throw err;
@@ -276,7 +277,7 @@ var appRouter = function(app) {
                 }
             },getTime);
         }
-    })
+    });
     
     app.post('/removeItemFromCartDB',function (req,res) {
         var json_responses;
@@ -304,11 +305,54 @@ var appRouter = function(app) {
                 }
             }
         },deleteItemDetails)
-    })
+    });
+
+    app.get('/updateCheckoutInfo',function (req,res) {
+        //update cart items with isCheckedOut option.
+        var json_responses;
+        var isChecked = "UPDATE cart set isCheckedOut = '"+1+"' where username = '"+req.session.username+"'";
+        console.log("checkout query"+isChecked);
+        fetchData(function (err,result) {
+            if(err)
+            {
+                throw err;
+            }
+            else{
+                if(result.affectedRows>0)
+                {
+                    json_responses = {"statusCode":200};
+                    res.send(json_responses);
+                }
+                else {
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },isChecked);
+    });
+
+    app.get('/getCheckoutInfo',function(req,res){
+        var json_responses;
+        var getCheckout = "SELECT * from cart where username='"+req.session.username+"' AND isCheckedOut='"+1+"'";
+        fetchData(function(err,result){
+            if(err){
+                throw err;
+            }
+            else{
+                if(result.length>0){
+                    json_responses = result;
+                    res.send(json_responses);
+                }
+                else {
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getCheckout);
+    });
 
     function fetchData(callback, sqlQuery) {
         console.log("\nSql Query" + sqlQuery);
-
         app.connection.query(sqlQuery, function(err, rows, fields) {
             if (err) {
                 console.log("Error Message:" + err);
