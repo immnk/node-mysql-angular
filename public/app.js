@@ -49,7 +49,7 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         })
         .state('dashboard.cartLanding.checkout', {
             url: '/checkout',
-            templateUrl: 'templates/successfulSell.html',
+            templateUrl: 'templates/checkout.html',
             controller: 'checkoutController'
         })
     $urlRouterProvider.otherwise('/landing/register');

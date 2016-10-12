@@ -281,9 +281,9 @@ var appRouter = function(app) {
     app.post('/removeItemFromCartDB',function (req,res) {
         var json_responses;
         var itemName = req.body.itemName;
-        //var itemPostedBy = req.body.item_posted;
+        var itemPostedBy = req.body.itemPostedBy;
 
-        var deleteItemDetails = "DELETE from cart where itemName='"+itemName+"' ";
+        var deleteItemDetails = "DELETE from cart where itemName='"+itemName+"' AND itemPostedBy='"+itemPostedBy+"'";
         fetchData(function (err,result) {
             if(err)
             {

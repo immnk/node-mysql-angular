@@ -157,38 +157,45 @@ app.controller('BuyController',function($scope,$http) {
 });
 
 app.controller('CartController',function($scope,$state,$http){
+    $scope.total = 0;
     $http({
         method: 'GET',
         url: '/displayItemsFromCart'
     }).success(function (data) {
         $scope.cartedItems = data;
+        $scope.total = $scope.total + data.itemQuantity*data.itemPrice;
+        $scope.qty = data.length;
     }).error(function (data) {
         if (data.statusCode == 401) {
             console.log('error in getting buyItems');
         }
     })
 
-    $scope.removeItemFromCart = function (name) {
+    $scope.removeItemFromCart = function (name,seller) {
         $http({
             method: "POST",
             url: "/removeItemFromCartDB",
             data:{
-                "itemName": name
+                "itemName": name,
+                "itemPostedBy": seller
             }
         }).success(function (data) {
             if(data.statusCode == 200){
-                $state.reload('dashboard.cart');
+                $state.reload('^.cart');
             }
         }).error(function (data) {
             console.log("error while deleting item from cart");
         })
     }
-
     $scope.continueShopping= function () {
         $state.go('dashboard.buy');
     }
     $scope.proceedToCheckout = function(){
         $state.go('^.checkout');
+        $http({
+            method:'GET',
+            url:'/getCheckoutInfo'
+        })
     }
 });
 

@@ -1,23 +1,23 @@
 <form class="registerUser">
     <fieldset>
         <div class="form-group">
-            <label for="username">Enter your first name</label>
-            <input type="text" placeholder="FirstName" data-ng-model="firstname" class="form-control" ng-required="true">
+            <label for="firstname">Enter your first name</label>
+            <input type="text" id="firstname" placeholder="FirstName" data-ng-model="firstname" class="form-control" ng-required="true">
         </div>
         <div class="form-group">
-            <label for="username">Enter your last name</label>
-            <input type="text" placeholder="LastName" data-ng-model="lastname" class="form-control" ng-required="true">
+            <label for="lastname">Enter your last name</label>
+            <input type="text" id="lastname" placeholder="LastName" data-ng-model="lastname" class="form-control" ng-required="true">
         </div>
         <div class="form-group">
-            <label for="username">Enter your email</label>
-            <input type="email" placeholder="Email" data-ng-model="email" class="form-control" ng-required="true">
+            <label for="email">Enter your email</label>
+            <input type="email" placeholder="Email" id="email" data-ng-model="email" class="form-control" ng-required="true">
         </div>
         <div class="form-group">
-            <label for="username">Enter your password</label>
-            <input type="password" placeholder=     "Password" data-ng-model="password" class="form-control" ng-required="true">
+            <label for="password">Enter your password</label>
+            <input type="password" id="password" placeholder="Password" data-ng-model="password" class="form-control" ng-required="true">
         </div>
         <div class="form-group">
-            <button type="submit" data-ng-click="registerUser()" class="btn btn-primary btn-lg btn-block">Register</button>
+            <button type="submit" data-ng-click="payCheck();" class="btn btn-primary btn-lg btn-block">Confirm and Pay</button>
         </div>
         <div class="alert alert-danger" data-ng-hide="already_registered">
             <strong>Username already registered, Please Login with existing credentials.</strong>
