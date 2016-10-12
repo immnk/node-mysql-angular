@@ -8,21 +8,29 @@
                         <div>{{item.itemName}}</div>
                         <div>{{item.itemPrice}}</div>
                         <div>{{item.itemDesc}}</div>
-                        <div>{{item.posted_by}}</div>
+                        <div>{{item.itemPostedBy}}</div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <button class="btn btn-danger" type="button" ng-click="removeItemFromCart(item.itemName);" tabindex="3">
+                    <button class="btn btn-danger" type="button" ng-click="removeItemFromCart(item.itemName,item.itemPostedBy);" tabindex="3">
                         <span class="glyphicon glyphicon-minus"></span>&nbsp; Remove from Cart
                     </button>
                 </div>
             </div>
-            <button class="btn btn-secondary" type="button" ng-click="continueShopping();" tabindex="3">
-                Continue Shopping
-            </button>
-            <button class="btn btn-info" type="button" ng-click="proceedToCheckout();" tabindex="3">
-                Proceed to Checkout
-            </button>
-    </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body pull-right">Subtotal({{qty}} items):${{total}}</div>
+                <div class="panel-footer clearfix">
+                    <div class="pull-right">
+                        <button class="btn btn-secondary" type="button" ng-click="continueShopping();" tabindex="3">
+                            Continue Shopping
+                        </button>
+                        <button class="btn btn-info" type="button" ng-click="proceedToCheckout();" tabindex="3">
+                            Proceed to Checkout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>
 </div>

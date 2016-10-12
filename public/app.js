@@ -49,8 +49,13 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         })
         .state('dashboard.cartLanding.checkout', {
             url: '/checkout',
-            templateUrl: 'templates/successfulSell.html',
+            templateUrl: 'templates/checkout.html',
             controller: 'checkoutController'
+        }).state('dashboard.myebay',{
+           url:'/myebay',
+            templateUrl:'templates/myebay.html',
+            controller: 'myebayController'
+
         })
     $urlRouterProvider.otherwise('/landing/register');
 });
