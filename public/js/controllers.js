@@ -54,8 +54,8 @@ app.controller("LoginController", function($scope, $http, $state) {
             if (data.statusCode === 401) {
                 $scope.invalid_login = false;
                 $scope.unexpected_error = true;
-            } else {
-                    $state.go('dashboard.sell');
+            } else{
+                $state.go('dashboard.sell');
             }
         }).error(function(data) {
             $scope.invalid_login = true;
@@ -162,12 +162,17 @@ app.controller('CartController',function($scope,$state,$http){
         method: 'GET',
         url: '/displayItemsFromCart'
     }).success(function (data) {
-        $scope.cartedItems = data;
-        for(var i=0;i<data.length;i++)
-        {
-            $scope.total = $scope.total + data[i].itemPrice*data[i].itemQuantity;
+        if(data.length>0){
+            $scope.cartedItems = data;
+            for(var i=0;i<data.length;i++)
+            {
+                $scope.total = $scope.total + data[i].itemPrice*data[i].itemQuantity;
+            }
+            $scope.qty = data.length;
         }
-        $scope.qty = data.length;
+        else {
+            console.log("Sorry your cart is empty!");
+        }
     }).error(function (data) {
         if (data.statusCode == 401) {
             console.log('error in getting buyItems');
@@ -184,7 +189,7 @@ app.controller('CartController',function($scope,$state,$http){
             }
         }).success(function (data) {
             if(data.statusCode == 200){
-                $state.reload('^.cart');
+                $state.reload();
             }
         }).error(function (data) {
             console.log("error while deleting item from cart");
@@ -212,7 +217,28 @@ app.controller('CartController',function($scope,$state,$http){
 });
 
 app.controller("checkoutController",function ($scope,$http) {
+    $scope.invalid_details=true;
+        $scope.checkCreditCardValidity = function () {
+        $http({
+            method:"POST",
+            url: "/checkCardValidity",
+            data:{
+                "card_num": $scope.card_num,
+                "cvv":$scope.cvv,
+                "exp_date": $scope.exp_date
+            }
+        }).success(function (data) {
+            if(data.statusCode ==200){
+                $scope.invalid_details = true;
+            }
+            else
+            {
+                $scope.invalid_details = false;
+            }
+        }).error(function (data) {
 
+        })
+    }
 });
 
 app.controller("cartLandingController", function($scope) {
@@ -221,15 +247,34 @@ app.controller("cartLandingController", function($scope) {
 
 app.controller('myebayController',function ($scope,$http) {
 
+});
+
+app.controller('orderHistoryController',function ($scope,$http) {
     $http({
         method: "GET",
         url: "/getCheckoutInfo"
     }).success(function (data) {
-        $scope.orderHist = data;
+        if(data.length>0){
+            $scope.orderHist = data;
+        }
     }).error(function(data){
         if(data.statusCode==401){
             console.log("error while getting order history");
         }
     })
+});
 
-})
+app.controller('soldHistoryController',function ($scope,$http) {
+    $http({
+        method: "GET",
+        url: "/getSoldInfo"
+    }).success(function (data) {
+        if(data.length>0){
+            $scope.soldHist = data;
+        }
+    }).error(function(data){
+        if(data.statusCode==401){
+            console.log("error while getting order history");
+        }
+    })
+});

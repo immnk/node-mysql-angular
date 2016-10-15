@@ -31,8 +31,9 @@ var appRouter = function(app) {
                             },updateTime);
                             req.session.username = username;
                             console.log("Session initialized");
-                            json_responses = { "statusCode": 200};
-                            res.send(json_responses);
+                                json_responses = { "statusCode": 200};
+                                res.send(json_responses);
+
                         } else {
                             json_responses = { "statusCode": 401 };
                             res.send(json_responses);
@@ -137,8 +138,10 @@ var appRouter = function(app) {
                     console.log(result);
                     if(result.affectedRows == 1){
                         console.log('Added Ad');
-                        json_responses = {"statusCode":200};
-                        res.send(json_responses);
+
+                            json_responses = {"statusCode":200};
+                            res.send(json_responses);
+
                     }
                     else{
                         json_responses = {"statusCode":401};
@@ -199,7 +202,6 @@ var appRouter = function(app) {
                                 itemQuantity : itemQuantity
                             });
                         }
-                    console.log("User Cart:",req.session.cart);
                     var ItemsToBeCarted = "INSERT INTO cart(username,itemName,itemPrice,itemDesc,itemPostedBy,itemQuantity) values('"+req.session.username+"','"+itemName+"','"+result[0].itemPrice+"','"+result[0].itemDesc+"','"+result[0].posted_by+"','"+itemQuantity+"')";
                     console.log("items to be carted"+ItemsToBeCarted);
                     fetchData(function (err,result) {
@@ -228,8 +230,7 @@ var appRouter = function(app) {
         var json_responses;
         if(req.session.username)
         {
-            var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"'";
-            //var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"' AND isCheckedOut!='"+1+"'";
+            var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"' AND isCheckedOut LIKE '0' AND isDeleted LIKE '0'";
             fetchData(function(err,result){
                 if(err){
                     throw err;
@@ -247,10 +248,6 @@ var appRouter = function(app) {
                 }
 
             },GetUserCartItems)
-        }
-        else{
-            json_responses = {"statusCode":401};
-            res.send(json_responses);
         }
     });
 
@@ -284,7 +281,8 @@ var appRouter = function(app) {
         var itemName = req.body.itemName;
         var itemPostedBy = req.body.itemPostedBy;
 
-        var deleteItemDetails = "DELETE from cart where itemName='"+itemName+"' AND itemPostedBy='"+itemPostedBy+"'";
+        var isDeleted = "UPDATE cart set isDeleted = '"+1+"' where itemName='"+itemName+"' AND itemPostedBy='"+itemPostedBy+"' AND username='"+req.session.username +"'";
+
         fetchData(function (err,result) {
             if(err)
             {
@@ -304,13 +302,14 @@ var appRouter = function(app) {
                     res.send(json_responses);
                 }
             }
-        },deleteItemDetails)
+        },isDeleted)
     });
 
     app.get('/updateCheckoutInfo',function (req,res) {
+
         //update cart items with isCheckedOut option.
         var json_responses;
-        var isChecked = "UPDATE cart set isCheckedOut = '"+1+"' where username = '"+req.session.username+"'";
+        var isChecked = "UPDATE cart set isCheckedOut = '"+1+"',isSold='"+1+"' where username = '"+req.session.username+"'";
         console.log("checkout query"+isChecked);
         fetchData(function (err,result) {
             if(err)
@@ -349,6 +348,61 @@ var appRouter = function(app) {
                 }
             }
         },getCheckout);
+    });
+
+    app.get('/getSoldInfo',function(req,res){
+        var json_responses;
+        var getSoldout = "SELECT * from cart where itemPostedBy='"+req.session.username+"' AND isSold='"+1+"'";
+        fetchData(function(err,result){
+            if(err){
+                throw err;
+            }
+            else{
+                if(result.length>0){
+                    json_responses = result;
+                    res.send(json_responses);
+                }
+                else {
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getSoldout);
+    });
+
+    app.post("/checkCardValidity",function (req,res) {
+        var credit = req.body.card_num;
+        var date= req.body.exp_date;
+        var cvv = req.body.cvv;
+
+
+        console.log(credit);
+        console.log(date);
+        console.log(cvv);
+
+        var json_responses;
+
+        var regex = /^[0-9]{3,4}$/ ;
+        var match = regex.exec(cvv);
+        var regex1=/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
+        var match1= regex1.exec(credit);
+        var regex2=/^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+        var match2 = regex2.exec(date);
+        console.log(match);
+        console.log(match1);
+        console.log(match2);
+
+        if(match!="" && match!=null && match1!="" && match1!=null && match2!="" && match2 !=null)
+        {
+            json_responses = {"statusCode":200};
+            console.log(json_responses);
+            res.send(json_responses);
+        }
+        else {
+            json_responses = {"statusCode":401};
+            console.log(json_responses);
+            res.send(json_responses);
+        }
     });
 
     function fetchData(callback, sqlQuery) {
