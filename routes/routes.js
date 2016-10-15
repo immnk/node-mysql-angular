@@ -1,4 +1,5 @@
 var bcrypt = require('bcrypt');
+var schedule = require('node-schedule');
 
 var appRouter = function(app) {
     app.post("/checkLogin", function(req, res) {
@@ -128,8 +129,32 @@ var appRouter = function(app) {
     app.post("/addItemToDB",function(req,res){
         var json_responses;
         if(req.session.username){
-            var pushAd = "INSERT INTO ads(itemName,itemPrice,itemDesc,posted_by) VALUES('"+ req.body.itemName +"','"+ req.body.itemPrice +"','"+ req.body.itemDesc +"','"+ req.session.username +"')";
+            var pushAd = "INSERT INTO ads(itemName,itemPrice,itemDesc,posted_by,isBid,maxBid) VALUES('"+ req.body.itemName +"','"+ req.body.itemPrice +"','"+ req.body.itemDesc +"','"+ req.session.username +"','"+req.body.isBid+"','"+req.body.itemPrice+"')";
             console.log("Query is:"+ pushAd);
+            console.log("Just added the bid ad");
+            if(req.body.isBid){
+                var startTime = new Date(Date.now());
+                var endTime = new Date(startTime.getTime() + 5*60000);
+                console.log("startTime"+startTime);
+                console.log("endTime"+endTime);
+                var bidJob = schedule.scheduleJob(endTime,function () {
+                    var updateBiddingStatus = "UPDATE ads SET isBiddingDone='"+true+"' where isBid='"+true+"' AND itemName='"+req.body.itemName+"' AND posted_by='"+req.session.username+"'";
+                    fetchData(function (err,result) {
+                        if(err){
+                            throw err;
+                        }
+                        else {
+                            if(result.affectedRows == 1){
+                                console.log("successfully updated bidding status");
+                            }
+                        }
+                    },updateBiddingStatus);
+                    bidJob.cancel();
+                });
+            }
+
+            console.log("after cancel");
+
             fetchData(function(err,result){
                 if(err){
                     throw err;
@@ -172,7 +197,7 @@ var appRouter = function(app) {
                 }
             }
         },getItemsForSale)
-    })
+    });
 
     app.post("/addItemToCartDB",function(req,res){
         var json_responses;
@@ -405,6 +430,89 @@ var appRouter = function(app) {
         }
     });
 
+    app.get('/getBidItemsForSale',function (req,res) {
+        var json_responses;
+        var getBidItemsForSale = "SELECT * from ads where posted_by != '"+req.session.username+"' AND isBid='"+true+"' AND isBiddingDone='"+false+"'";
+        console.log(getBidItemsForSale);
+
+        fetchData(function(err,result){
+            if(err){
+                throw err
+            }
+            else{
+                if(result.length > 0)
+                {
+                    res.send(result);
+                }
+                else{
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getBidItemsForSale)
+    });
+
+    app.post('/updateMaxBid',function (req,res) {
+        var json_responses;
+        var userBid = req.body.bidValue;
+        var itemName = req.body.itemName;
+        var itemPostedBy = req.body.itemPostedBy;
+
+        console.log('This users bid:'+userBid);
+
+        var getMaxBidForCurrentItem = "SELECT maxBid from ads where itemName='"+itemName+"' AND posted_by='"+itemPostedBy+"'";
+
+        fetchData(function (err,result) {
+            if(err){
+                throw err;
+            }
+            else{
+                if(result.length>0)
+                {
+                    console.log("maxBid for item is"+result[0].maxBid);
+                    if(userBid > result[0].maxBid) {
+                        var updateMaxBidAndUSer = "UPDATE ads SET maxBid = '" + userBid + "',maxBidUser='" + req.session.username + "' where itemName='"+itemName+"' AND posted_by='"+itemPostedBy+"' AND isBid='"+true+"'";
+                        fetchData(function (err, result) {
+                            if (err) {
+                                throw err;
+                            }
+                            else {
+                                if (result.affectedRows > 0) {
+                                    json_responses = {"statusCode": 200};
+                                    res.send(json_responses);
+                                }
+                                else {
+                                    json_responses = {"statusCode": 401};
+                                    res.send(json_responses);
+                                }
+                            }
+                        },updateMaxBidAndUSer);
+                        }
+                    }
+                }
+            },getMaxBidForCurrentItem);
+    });
+
+    app.get('/getBidHistory',function (req,res) {
+        var json_responses;
+        var getBidHist = "SELECT * from ads where isBiddingDone='"+true+"' AND maxBidUser='"+req.session.username+"'";
+        fetchData(function(err,result){
+            if(err){
+                throw err;
+            }
+            else {
+                if(result.length>0){
+                    json_responses = result;
+                    res.send(json_responses);
+                }
+                else{
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getBidHist)
+    })
+
     function fetchData(callback, sqlQuery) {
         console.log("\nSql Query" + sqlQuery);
         app.connection.query(sqlQuery, function(err, rows, fields) {
@@ -417,6 +525,5 @@ var appRouter = function(app) {
         });
     }
 }
-
 
 module.exports = appRouter;

@@ -67,6 +67,14 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
         url: '/soldHistory',
         templateUrl: 'templates/soldItems.html',
         controller: 'soldHistoryController'
+        }).state('dashboard.myebayLanding.bidhistory',{
+        url: '/bidHistory',
+        templateUrl: 'templates/bidHistory.html',
+        controller: 'bidHistoryController'
+        }).state('dashboard.bid',{
+            url:'/bid',
+            templateUrl:'templates/bid.html',
+            controller:'BidController'
         })
     $urlRouterProvider.otherwise('/landing/register');
 });

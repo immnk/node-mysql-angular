@@ -104,7 +104,8 @@ app.controller('SellController', function($scope, $http, $state) {
             data: {
                 "itemName": $scope.itemName,
                 "itemPrice": $scope.itemPrice,
-                "itemDesc": $scope.itemDesc
+                "itemDesc": $scope.itemDesc,
+                "isBid": $scope.isBid
             }
         }).success(function(data) {
             if(data.statusCode == 200)
@@ -278,3 +279,48 @@ app.controller('soldHistoryController',function ($scope,$http) {
         }
     })
 });
+
+app.controller('BidController',function ($scope,$http) {
+    $http({
+        method: 'GET',
+        url: '/getBidItemsForSale'
+    }).success(function (data) {
+        $scope.bidItems = data;
+        /*for(var i=0;i<data.length;i++)
+        {
+            $scope.minBid = data[i].maxBid;
+        }*/
+    }).error(function (data) {
+        if (data.statusCode == 401) {
+            console.log('error in getting buyItems');
+        }
+    })
+
+    $scope.updateUserBid = function (userBid,itemName,itemPostedBy) {
+        $http({
+            method:"POST",
+            url:"/updateMaxBid",
+            data:{
+                "bidValue": userBid,
+                "itemName": itemName,
+                "itemPostedBy": itemPostedBy
+            }
+        }).success(function (data) {
+
+        }).error(function (data) {
+
+        })
+    }
+});
+
+app.controller('bidHistoryController',function ($scope,$http) {
+
+    $http({
+        method: "GET",
+        url: "/getBidHistory"
+    }).success(function (data) {
+        $scope.bidHist = data;
+    }).error(function (data) {
+        console.log('error while getting bid history');
+    })
+})
