@@ -5,6 +5,18 @@ app.controller("LandingController", function($scope) {
 });
 
 app.controller("RegisterController", function($scope, $http, $state) {
+
+    $scope.inputType = 'password';
+
+    // Hide & show password function
+    $scope.hideShowPassword = function(){
+        if ($scope.inputType == 'password')
+            $scope.inputType = 'text';
+        else
+            $scope.inputType = 'password';
+    };
+
+    //Registration functions
     $scope.already_registered = true;
     $scope.unexpected_error = true;
     $scope.registerUser = function() {

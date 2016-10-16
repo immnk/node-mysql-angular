@@ -2,19 +2,24 @@
     <fieldset>
         <div class="form-group">
             <label for="firstname">Enter your first name</label>
-            <input type="text" id="firstname" placeholder="FirstName" data-ng-model="firstname" class="form-control" ng-required="true">
+            <input type="text" id="firstname" placeholder="FirstName" data-ng-model="firstname" class="form-control" >
         </div>
         <div class="form-group">
             <label for="lastname">Enter your last name</label>
-            <input type="text" id="lastname" placeholder="LastName" data-ng-model="lastname" class="form-control" ng-required="true">
+            <input type="text" id="lastname" placeholder="LastName" data-ng-model="lastname" class="form-control" >
         </div>
         <div class="form-group">
             <label for="email">Enter your email</label>
-            <input type="email" placeholder="Email" id="email" data-ng-model="email" class="form-control" ng-required="true">
+            <input type="email" placeholder="Email" id="email" data-ng-model="email" class="form-control" >
         </div>
         <div class="form-group">
             <label for="password">Enter your password</label>
-            <input type="password" id="password" placeholder="Password" data-ng-model="password" class="form-control" ng-required="true">
+            <input type="{{inputType}}" id="password" placeholder="Password" data-ng-model="password" class="form-control" >
+        </div>
+        <div class="form-group">
+            <input type="checkbox" id="checkbox" ng-model="passwordCheckbox" ng-click="hideShowPassword()" />
+            <label for="checkbox" ng-if="passwordCheckbox">Hide password</label>
+            <label for="checkbox" ng-if="!passwordCheckbox">Show password</label>
         </div>
         <div class="form-group">
             <button type="submit" data-ng-click="registerUser();" class="btn btn-primary btn-lg btn-block">Register</button>
@@ -23,7 +28,7 @@
             <strong>Username already registered, Please Login with existing credentials.</strong>
         </div>
         <div class="alert alert-danger" data-ng-hide="unexpected_error">
-            <strong>An Unexpected Error Occurred</strong>
+            <strong>An Unexpected Error Occurred While Registering</strong>
         </div>
     </fieldset>
 </form>
