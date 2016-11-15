@@ -1,3 +1,6 @@
+
+//This is the place where server is started.
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var http = require('http');
