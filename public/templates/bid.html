@@ -1,0 +1,24 @@
+<div class="container-fluid">
+    <h1>Items on auction</h1>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="row well" data-ng-repeat="item in bidItems">
+                <div class="col-md-6">
+                    <div>
+                        <div>{{item.itemName}}</div>
+                        <div>{{item.itemPrice}}</div>
+                        <div>{{item.itemDesc}}</div>
+                        <div>{{item.posted_by}}</div>
+                        <div>The Minimum Bid Value is : {{item.maxBid}}</div>
+                    </div>
+                </div>
+                <div>
+                    <input type="number" data-ng-model="userBid">
+                </div>
+                <button class="btn btn-success" type="button" ng-click="updateUserBid(userBid,item.itemName,item.posted_by);" tabindex="3">
+                    <span class="glyphicon glyphicon-plus"></span>&nbsp;Add bid
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,5 @@
 var bcrypt = require('bcrypt');
+var schedule = require('node-schedule');
 
 var appRouter = function(app) {
     app.post("/checkLogin", function(req, res) {
@@ -31,8 +32,9 @@ var appRouter = function(app) {
                             },updateTime);
                             req.session.username = username;
                             console.log("Session initialized");
-                            json_responses = { "statusCode": 200};
-                            res.send(json_responses);
+                                json_responses = { "statusCode": 200};
+                                res.send(json_responses);
+
                         } else {
                             json_responses = { "statusCode": 401 };
                             res.send(json_responses);
@@ -127,8 +129,32 @@ var appRouter = function(app) {
     app.post("/addItemToDB",function(req,res){
         var json_responses;
         if(req.session.username){
-            var pushAd = "INSERT INTO ads(itemName,itemPrice,itemDesc,posted_by) VALUES('"+ req.body.itemName +"','"+ req.body.itemPrice +"','"+ req.body.itemDesc +"','"+ req.session.username +"')";
+            var pushAd = "INSERT INTO ads(itemName,itemPrice,itemDesc,posted_by,isBid,maxBid) VALUES('"+ req.body.itemName +"','"+ req.body.itemPrice +"','"+ req.body.itemDesc +"','"+ req.session.username +"','"+req.body.isBid+"','"+req.body.itemPrice+"')";
             console.log("Query is:"+ pushAd);
+            console.log("Just added the bid ad");
+            if(req.body.isBid){
+                var startTime = new Date(Date.now());
+                var endTime = new Date(startTime.getTime() + 5*60000);
+                console.log("startTime"+startTime);
+                console.log("endTime"+endTime);
+                var bidJob = schedule.scheduleJob(endTime,function () {
+                    var updateBiddingStatus = "UPDATE ads SET isBiddingDone='"+true+"' where isBid='"+true+"' AND itemName='"+req.body.itemName+"' AND posted_by='"+req.session.username+"'";
+                    fetchData(function (err,result) {
+                        if(err){
+                            throw err;
+                        }
+                        else {
+                            if(result.affectedRows == 1){
+                                console.log("successfully updated bidding status");
+                            }
+                        }
+                    },updateBiddingStatus);
+                    bidJob.cancel();
+                });
+            }
+
+            console.log("after cancel");
+
             fetchData(function(err,result){
                 if(err){
                     throw err;
@@ -137,8 +163,10 @@ var appRouter = function(app) {
                     console.log(result);
                     if(result.affectedRows == 1){
                         console.log('Added Ad');
-                        json_responses = {"statusCode":200};
-                        res.send(json_responses);
+
+                            json_responses = {"statusCode":200};
+                            res.send(json_responses);
+
                     }
                     else{
                         json_responses = {"statusCode":401};
@@ -169,7 +197,7 @@ var appRouter = function(app) {
                 }
             }
         },getItemsForSale)
-    })
+    });
 
     app.post("/addItemToCartDB",function(req,res){
         var json_responses;
@@ -199,7 +227,6 @@ var appRouter = function(app) {
                                 itemQuantity : itemQuantity
                             });
                         }
-                    console.log("User Cart:",req.session.cart);
                     var ItemsToBeCarted = "INSERT INTO cart(username,itemName,itemPrice,itemDesc,itemPostedBy,itemQuantity) values('"+req.session.username+"','"+itemName+"','"+result[0].itemPrice+"','"+result[0].itemDesc+"','"+result[0].posted_by+"','"+itemQuantity+"')";
                     console.log("items to be carted"+ItemsToBeCarted);
                     fetchData(function (err,result) {
@@ -228,8 +255,7 @@ var appRouter = function(app) {
         var json_responses;
         if(req.session.username)
         {
-            var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"'";
-            //var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"' AND isCheckedOut!='"+1+"'";
+            var GetUserCartItems = "SELECT * FROM cart where username ='"+req.session.username+"' AND isCheckedOut LIKE '0' AND isDeleted LIKE '0'";
             fetchData(function(err,result){
                 if(err){
                     throw err;
@@ -247,10 +273,6 @@ var appRouter = function(app) {
                 }
 
             },GetUserCartItems)
-        }
-        else{
-            json_responses = {"statusCode":401};
-            res.send(json_responses);
         }
     });
 
@@ -284,7 +306,8 @@ var appRouter = function(app) {
         var itemName = req.body.itemName;
         var itemPostedBy = req.body.itemPostedBy;
 
-        var deleteItemDetails = "DELETE from cart where itemName='"+itemName+"' AND itemPostedBy='"+itemPostedBy+"'";
+        var isDeleted = "UPDATE cart set isDeleted = '"+1+"' where itemName='"+itemName+"' AND itemPostedBy='"+itemPostedBy+"' AND username='"+req.session.username +"'";
+
         fetchData(function (err,result) {
             if(err)
             {
@@ -304,13 +327,14 @@ var appRouter = function(app) {
                     res.send(json_responses);
                 }
             }
-        },deleteItemDetails)
+        },isDeleted)
     });
 
     app.get('/updateCheckoutInfo',function (req,res) {
+
         //update cart items with isCheckedOut option.
         var json_responses;
-        var isChecked = "UPDATE cart set isCheckedOut = '"+1+"' where username = '"+req.session.username+"'";
+        var isChecked = "UPDATE cart set isCheckedOut = '"+1+"',isSold='"+1+"' where username = '"+req.session.username+"'";
         console.log("checkout query"+isChecked);
         fetchData(function (err,result) {
             if(err)
@@ -351,6 +375,144 @@ var appRouter = function(app) {
         },getCheckout);
     });
 
+    app.get('/getSoldInfo',function(req,res){
+        var json_responses;
+        var getSoldout = "SELECT * from cart where itemPostedBy='"+req.session.username+"' AND isSold='"+1+"'";
+        fetchData(function(err,result){
+            if(err){
+                throw err;
+            }
+            else{
+                if(result.length>0){
+                    json_responses = result;
+                    res.send(json_responses);
+                }
+                else {
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getSoldout);
+    });
+
+    app.post("/checkCardValidity",function (req,res) {
+        var credit = req.body.card_num;
+        var date= req.body.exp_date;
+        var cvv = req.body.cvv;
+
+
+        console.log(credit);
+        console.log(date);
+        console.log(cvv);
+
+        var json_responses;
+
+        var regex = /^[0-9]{3,4}$/ ;
+        var match = regex.exec(cvv);
+        var regex1=/^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
+        var match1= regex1.exec(credit);
+        var regex2=/^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+        var match2 = regex2.exec(date);
+        console.log(match);
+        console.log(match1);
+        console.log(match2);
+
+        if(match!="" && match!=null && match1!="" && match1!=null && match2!="" && match2 !=null)
+        {
+            json_responses = {"statusCode":200};
+            console.log(json_responses);
+            res.send(json_responses);
+        }
+        else {
+            json_responses = {"statusCode":401};
+            console.log(json_responses);
+            res.send(json_responses);
+        }
+    });
+
+    app.get('/getBidItemsForSale',function (req,res) {
+        var json_responses;
+        var getBidItemsForSale = "SELECT * from ads where posted_by != '"+req.session.username+"' AND isBid='"+true+"' AND isBiddingDone='"+false+"'";
+        console.log(getBidItemsForSale);
+
+        fetchData(function(err,result){
+            if(err){
+                throw err
+            }
+            else{
+                if(result.length > 0)
+                {
+                    res.send(result);
+                }
+                else{
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getBidItemsForSale)
+    });
+
+    app.post('/updateMaxBid',function (req,res) {
+        var json_responses;
+        var userBid = req.body.bidValue;
+        var itemName = req.body.itemName;
+        var itemPostedBy = req.body.itemPostedBy;
+
+        console.log('This users bid:'+userBid);
+
+        var getMaxBidForCurrentItem = "SELECT maxBid from ads where itemName='"+itemName+"' AND posted_by='"+itemPostedBy+"'";
+
+        fetchData(function (err,result) {
+            if(err){
+                throw err;
+            }
+            else{
+                if(result.length>0)
+                {
+                    console.log("maxBid for item is"+result[0].maxBid);
+                    if(userBid > result[0].maxBid) {
+                        var updateMaxBidAndUSer = "UPDATE ads SET maxBid = '" + userBid + "',maxBidUser='" + req.session.username + "' where itemName='"+itemName+"' AND posted_by='"+itemPostedBy+"' AND isBid='"+true+"'";
+                        fetchData(function (err, result) {
+                            if (err) {
+                                throw err;
+                            }
+                            else {
+                                if (result.affectedRows > 0) {
+                                    json_responses = {"statusCode": 200};
+                                    res.send(json_responses);
+                                }
+                                else {
+                                    json_responses = {"statusCode": 401};
+                                    res.send(json_responses);
+                                }
+                            }
+                        },updateMaxBidAndUSer);
+                        }
+                    }
+                }
+            },getMaxBidForCurrentItem);
+    });
+
+    app.get('/getBidHistory',function (req,res) {
+        var json_responses;
+        var getBidHist = "SELECT * from ads where isBiddingDone='"+true+"' AND maxBidUser='"+req.session.username+"'";
+        fetchData(function(err,result){
+            if(err){
+                throw err;
+            }
+            else {
+                if(result.length>0){
+                    json_responses = result;
+                    res.send(json_responses);
+                }
+                else{
+                    json_responses = {"statusCode":401};
+                    res.send(json_responses);
+                }
+            }
+        },getBidHist)
+    })
+
     function fetchData(callback, sqlQuery) {
         console.log("\nSql Query" + sqlQuery);
         app.connection.query(sqlQuery, function(err, rows, fields) {
@@ -363,6 +525,5 @@ var appRouter = function(app) {
         });
     }
 }
-
 
 module.exports = appRouter;

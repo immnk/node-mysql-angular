@@ -1,23 +1,22 @@
-<form class="registerUser">
+<form class="creditCardCheck">
     <fieldset>
         <div class="form-group">
-            <label for="username">Enter your first name</label>
-            <input type="text" placeholder="FirstName" data-ng-model="firstname" class="form-control" ng-required="true">
+            <label for="creditCardNumber">Credit Card Number:</label>
+            <input type="text" placeholder="Enter your credit card number" data-ng-model="card_num" class="form-control" id="creditCardNumber" >
         </div>
         <div class="form-group">
-            <label for="username">Enter your last name</label>
-            <input type="text" placeholder="LastName" data-ng-model="lastname" class="form-control" ng-required="true">
+            <label for="expdate">Expiration Date:</label>
+            <input type="text" id="expdate" placeholder="Enter Your Expiration Date (mm/yy)" data-ng-model="exp_date" class="form-control" ng-required="true">
         </div>
         <div class="form-group">
-            <label for="username">Enter your email</label>
-            <input type="email" placeholder="Email" data-ng-model="email" class="form-control" ng-required="true">
+            <label for="cvv">CVV number:</label>
+            <input type="text" id="cvv" placeholder="Enter Your 3/4-digit CVV number" data-ng-model="cvv" class="form-control" ng-required="true">
         </div>
         <div class="form-group">
-            <label for="username">Enter your password</label>
-            <input type="password" placeholder=     "Password" data-ng-model="password" class="form-control" ng-required="true">
+            <button type="submit" data-ng-click="checkCreditCardValidity();" class="btn btn-primary btn-lg btn-block">Confirm and Pay</button>
         </div>
-        <div class="form-group">
-            <button type="submit" data-ng-click="registerUser()" class="btn btn-primary btn-lg btn-block">Register</button>
+        <div class="alert alert-danger" data-ng-hide="invalid_details">
+            <strong>The Credit Card information that you have entered is invalid. Please re-enter details to complete transaction</strong>
         </div>
 </fieldset>
-    </form>
+</form>

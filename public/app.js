@@ -51,11 +51,30 @@ app.config(function($stateProvider, $urlRouterProvider, $locationProvider) {
             url: '/checkout',
             templateUrl: 'templates/checkout.html',
             controller: 'checkoutController'
-        }).state('dashboard.myebay',{
+        }).state('dashboard.myebayLanding',{
            url:'/myebay',
             templateUrl:'templates/myebay.html',
             controller: 'myebayController'
-
+        }).state('dashboard.myebayLanding.about',{
+            url: '/profile',
+            templateUrl: 'templates/about.html',
+            controller: 'aboutController'
+        }).state('dashboard.myebayLanding.orderhistory',{
+            url: '/orderHistory',
+            templateUrl: 'templates/orderHistory.html',
+            controller: 'orderHistoryController'
+        }).state('dashboard.myebayLanding.soldhistory',{
+        url: '/soldHistory',
+        templateUrl: 'templates/soldItems.html',
+        controller: 'soldHistoryController'
+        }).state('dashboard.myebayLanding.bidhistory',{
+        url: '/bidHistory',
+        templateUrl: 'templates/bidHistory.html',
+        controller: 'bidHistoryController'
+        }).state('dashboard.bid',{
+            url:'/bid',
+            templateUrl:'templates/bid.html',
+            controller:'BidController'
         })
     $urlRouterProvider.otherwise('/landing/register');
 });
