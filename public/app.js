@@ -1,3 +1,5 @@
+//route config is present here
+
 var app = angular.module('eBayApp', ['ui.router', 'ui.bootstrap',
     'ui.bootstrap.collapse'
 ]);
