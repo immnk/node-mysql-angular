@@ -1,3 +1,4 @@
+// Mock ebay app
 var app = angular.module('eBayApp', ['ui.router', 'ui.bootstrap',
     'ui.bootstrap.collapse'
 ]);
